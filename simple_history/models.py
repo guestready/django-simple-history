@@ -23,7 +23,6 @@ from django.db.models.fields.related_descriptors import (
 )
 from django.db.models.query import QuerySet
 from django.db.models.signals import m2m_changed
-from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import smart_str
@@ -1015,8 +1014,8 @@ class HistoricalChanges(ModelTypeHint):
         """Helper method for ``diff_against()``."""
         changes = []
 
-        old_values = model_to_dict(old_history, fields=fields)
-        new_values = model_to_dict(self, fields=fields)
+        old_values = utils.model_to_dict(old_history, fields=fields)
+        new_values = utils.model_to_dict(self, fields=fields)
 
         for field in fields:
             old_value = old_values[field]

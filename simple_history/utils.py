@@ -1,8 +1,22 @@
+from itertools import chain
+
 from django.db import transaction
 from django.db.models import Case, ForeignKey, ManyToManyField, Q, When
-from django.forms.models import model_to_dict
 
 from simple_history.exceptions import AlternativeManagerError, NotHistoricalModelError
+
+
+# NOTE: Override from Django's `model_to_dict` to include `editable=False` fields
+def model_to_dict(instance, fields=None, exclude=None):
+    opts = instance._meta
+    data = {}
+    for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
+        if fields is not None and f.name not in fields:
+            continue
+        if exclude and f.name in exclude:
+            continue
+        data[f.name] = f.value_from_object(instance)
+    return data
 
 
 def update_change_reason(instance, reason):
